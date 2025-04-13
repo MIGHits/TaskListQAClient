@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TaskListQA</string>
+    <string name="your_tasks">Ваши заметки</string>
+</resources>
