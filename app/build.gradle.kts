@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.swipe)
+    implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

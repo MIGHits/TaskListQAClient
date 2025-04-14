@@ -1,6 +1,5 @@
 package com.example.tasklistqa.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +23,9 @@ private val LightColorScheme = lightColorScheme(
     background = Background,
     onBackground = onBackground,
     onTertiary = onTertiary,
-    onError = overdueColor,
+    onError = OverdueColor,
     outline = deadlineMarkerColor,
-    onTertiaryContainer = completedColor
+    onTertiaryContainer = CompletedColor
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
