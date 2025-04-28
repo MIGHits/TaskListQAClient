@@ -20,9 +20,9 @@ import com.example.tasklistqa.R
 import com.example.tasklistqa.data.TaskPriority
 
 @Composable
-fun PriorityBadge(priority: TaskPriority) {
+fun PriorityBadge(priority: TaskPriority, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentSize()
             .border(
                 width = 2.dp,

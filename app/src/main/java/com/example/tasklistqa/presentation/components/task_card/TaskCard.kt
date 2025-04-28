@@ -22,20 +22,20 @@ import me.saket.swipe.SwipeableActionsBox
 fun TaskCard(task: ShortTaskModel) {
     val delete = SwipeAction(
         onSwipe = {
-
+            TODO()
         },
         icon = {
-
+            TODO()
         },
         background = Color.Transparent
     )
 
     val edit = SwipeAction(
         onSwipe = {
-
+            TODO()
         },
         icon = {
-
+            TODO()
         },
         background = Color.Transparent
     )
