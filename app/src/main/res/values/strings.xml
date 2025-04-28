@@ -16,4 +16,10 @@
     <string name="description">Описание</string>
     <string name="deadline_field">Срок</string>
     <string name="priority_label">Приоритет</string>
+    <string name="create_task">Создать</string>
+    <string name="creation_date_label">Дата создания</string>
+    <string name="last_update">Последнее изменение</string>
+    <string name="task_status">Статус</string>
+    <string name="save_task">Сохранить</string>
+    <string name="edit_full_task">Редактирование</string>
 </resources>

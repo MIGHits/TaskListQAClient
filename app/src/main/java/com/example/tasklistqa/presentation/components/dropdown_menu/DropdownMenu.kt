@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.tasklistqa.R
-import com.example.tasklistqa.data.TaskStatus
+import com.example.tasklistqa.data.models.TaskStatus
 
 @Composable
 fun DropdownMenu() {

@@ -1,4 +1,4 @@
-package com.example.tasklistqa.data
+package com.example.tasklistqa.data.models
 
 data class ResponseModel(
     val status:String,

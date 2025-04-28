@@ -1,6 +1,6 @@
 package com.example.tasklistqa.presentation
 
-import com.example.tasklistqa.data.ShortTaskModel
+import com.example.tasklistqa.data.models.ShortTaskModel
 
 sealed class TaskScreenState {
     data object Loading : TaskScreenState()

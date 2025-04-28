@@ -26,16 +26,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
-import com.example.tasklistqa.data.ShortTaskModel
-import com.example.tasklistqa.data.TaskPriority
-import com.example.tasklistqa.data.TaskStatus
+import com.example.tasklistqa.data.models.ShortTaskModel
+import com.example.tasklistqa.data.models.TaskPriority
+import com.example.tasklistqa.data.models.TaskStatus
 import com.example.tasklistqa.presentation.components.EmptyListStub
 import com.example.tasklistqa.presentation.components.dropdown_menu.DropdownMenu
 import com.example.tasklistqa.presentation.components.task_card.TaskCard
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TaskScreen() {
+fun TaskScreen(
+    toCreationScreen: () -> Unit,
+    toFullTaskScreen: () -> Unit
+) {
     Scaffold(modifier = Modifier.fillMaxSize(),
         topBar = {
             Row(
@@ -58,7 +61,7 @@ fun TaskScreen() {
             Box(modifier = Modifier.fillMaxWidth()) {
                 FloatingActionButton(
                     shape = RoundedCornerShape(50),
-                    onClick = {},
+                    onClick = { toCreationScreen() },
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(bottom = 20.dp),
@@ -75,13 +78,13 @@ fun TaskScreen() {
         }
     ) {
         val itemList = listOf<ShortTaskModel>(
-             ShortTaskModel(
-                 id = "213ad12",
-                 name = "Качалка",
-                 status = TaskStatus.ACTIVE,
-                 deadline = "2025-04-13",
-                 priority = TaskPriority.HIGH
-             )
+            ShortTaskModel(
+                id = "213ad12",
+                name = "Качалка",
+                status = TaskStatus.ACTIVE,
+                deadline = "2025-04-13",
+                priority = TaskPriority.HIGH
+            )
         )
         if (!itemList.isEmpty()) {
             LazyColumn(
@@ -92,7 +95,7 @@ fun TaskScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(itemList) { item ->
-                    TaskCard(item)
+                    TaskCard(item, toFullTaskScreen)
                 }
             }
         } else {

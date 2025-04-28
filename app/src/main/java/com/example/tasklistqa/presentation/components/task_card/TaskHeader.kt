@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.tasklistqa.data.TaskStatus
+import com.example.tasklistqa.data.models.TaskStatus
 
 @Composable
 fun TaskHeader(title: String, status: TaskStatus) {
