@@ -13,14 +13,14 @@ import com.example.tasklistqa.presentation.route.TasksScreen
 fun NavigationScreen(modifier: Modifier, navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = TasksScreen,
+        startDestination = CreateTaskScreen,
         modifier = modifier
     ) {
         composable<TasksScreen> {
             TaskScreen()
         }
         composable<CreateTaskScreen> {
-
+            CreateTaskScreen()
         }
     }
 }

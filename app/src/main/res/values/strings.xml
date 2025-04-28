@@ -11,4 +11,9 @@
     <string name="priority">Приоритет</string>
     <string name="sort_asc">По возрастанию</string>
     <string name="sort_desc">По убыванию</string>
+    <string name="CreateTask">Новая задача</string>
+    <string name="name">Название</string>
+    <string name="description">Описание</string>
+    <string name="deadline_field">Срок</string>
+    <string name="priority_label">Приоритет</string>
 </resources>
