@@ -1,7 +1,6 @@
-package com.example.tasklistqa.data
+package com.example.tasklistqa.data.models
 
-data class EditTaskModel(
-    val id:String,
+data class TaskModel(
     val name:String,
     val description:String,
     val deadline:String,

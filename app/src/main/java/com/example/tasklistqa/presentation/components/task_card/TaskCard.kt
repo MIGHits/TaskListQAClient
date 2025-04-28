@@ -1,5 +1,6 @@
 package com.example.tasklistqa.presentation.components.task_card
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,35 +15,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.tasklistqa.data.ShortTaskModel
+import com.example.tasklistqa.data.models.ShortTaskModel
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
 @Composable
-fun TaskCard(task: ShortTaskModel) {
+fun TaskCard(task: ShortTaskModel, toFullTask: () -> Unit) {
     val delete = SwipeAction(
         onSwipe = {
-            TODO()
+
         },
         icon = {
-            TODO()
+
         },
         background = Color.Transparent
     )
 
     val edit = SwipeAction(
         onSwipe = {
-            TODO()
+
         },
         icon = {
-            TODO()
+
         },
         background = Color.Transparent
     )
     SwipeableActionsBox(
         startActions = listOf(delete),
         endActions = listOf(edit),
-        backgroundUntilSwipeThreshold = Color.Transparent
+        backgroundUntilSwipeThreshold = Color.Transparent,
+        modifier = Modifier.clickable { toFullTask() }
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),

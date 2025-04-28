@@ -29,7 +29,7 @@ fun TaskField(value: String, onValueChange: (String) -> Unit, name: String) {
             unfocusedIndicatorColor = Color.Transparent,
             focusedTextColor = MaterialTheme.colorScheme.secondary,
             unfocusedTextColor = MaterialTheme.colorScheme.secondary,
-            unfocusedLabelColor = PurpleGrey40
+            unfocusedLabelColor = if (value.isEmpty()) PurpleGrey40 else MaterialTheme.colorScheme.primary
         ),
         textStyle = MaterialTheme.typography.bodyMedium,
         shape = RoundedCornerShape(16),

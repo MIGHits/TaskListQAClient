@@ -1,9 +1,9 @@
-package com.example.tasklistqa.data
+package com.example.tasklistqa.data.models
 
-data class ShortTaskModel(
+data class EditTaskModel(
     val id:String,
     val name:String,
-    val status: TaskStatus,
+    val description:String,
     val deadline:String,
     val priority: TaskPriority
 )

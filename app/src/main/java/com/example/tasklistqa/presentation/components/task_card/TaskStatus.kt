@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.tasklistqa.data.TaskStatus
+import com.example.tasklistqa.data.models.TaskStatus
 import com.example.tasklistqa.ui.theme.ActiveColor
 import com.example.tasklistqa.ui.theme.CompletedColor
 import com.example.tasklistqa.ui.theme.LateColor
