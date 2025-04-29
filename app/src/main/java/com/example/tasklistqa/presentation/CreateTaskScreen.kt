@@ -14,29 +14,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
-import com.example.tasklistqa.common.Constant.CRITICAL
-import com.example.tasklistqa.common.Constant.HIGH
-import com.example.tasklistqa.common.Constant.LOW
-import com.example.tasklistqa.common.Constant.MEDIUM
-import com.example.tasklistqa.data.models.TaskPriority
+import com.example.tasklistqa.common.Utils.toApiFormat
+import com.example.tasklistqa.presentation.components.ErrorComponent
+import com.example.tasklistqa.presentation.components.LoadingIndicator
 import com.example.tasklistqa.presentation.components.PrioritySelector
 import com.example.tasklistqa.presentation.components.ScreenHeader
 import com.example.tasklistqa.presentation.components.TaskInputFields
-import com.example.tasklistqa.ui.theme.CompletedColor
-import com.example.tasklistqa.ui.theme.LateColor
-import com.example.tasklistqa.ui.theme.OverdueColor
+import com.example.tasklistqa.presentation.viewModel.TaskCreationViewModel
 import com.example.tasklistqa.ui.theme.PurpleGrey40
-import com.example.tasklistqa.ui.theme.deadlineMarkerColor
+import com.google.accompanist.swiperefresh.SwipeRefresh
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -44,84 +41,94 @@ import java.util.TimeZone
 @Composable
 fun CreateTaskScreen(
     onBackClick: () -> Unit,
+    viewModel: TaskCreationViewModel
 ) {
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var deadline by remember { mutableStateOf("") }
+    val screenState by viewModel.screenState.collectAsState()
     var isPriorityMenuVisible by remember { mutableStateOf(false) }
-    var priority by remember { mutableStateOf<TaskPriority?>(null) }
-    var isValid by remember { mutableStateOf(false) }
+
 
     val dateFormatter = remember {
         SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ScreenHeader(
-                onBackClick = onBackClick,
-                title = stringResource(R.string.CreateTask)
-            )
 
-            Spacer(Modifier.height(8.dp))
+    when (val state = screenState) {
+        is CreateTaskState.Loading -> LoadingIndicator()
+        is CreateTaskState.Error -> ErrorComponent(
+            state.message,
+            onRetry = { viewModel.createTask(viewModel.previousState.value) },
+            onDismiss = { viewModel.restorePreviousState() })
 
-            TaskInputFields(
-                name = name,
-                onNameChange = { name = it },
-                description = description,
-                onDescriptionChange = { description = it },
-                deadline = deadline,
-                onDeadlineChange = { deadline = it },
-                dateFormatter = dateFormatter
-            )
+        is CreateTaskState.Content -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    ScreenHeader(
+                        onBackClick = onBackClick,
+                        title = stringResource(R.string.CreateTask)
+                    )
 
-            PrioritySelector(
-                priority = priority,
-                isMenuVisible = isPriorityMenuVisible,
-                onMenuVisibilityChange = { isPriorityMenuVisible = it },
-                onPrioritySelected = { priority = it }
-            )
-        }
-        TextButton(
-            onClick = {},
-            enabled = isValid,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .fillMaxWidth(0.9f)
-                .background(
-                    color = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onTertiary,
-                    shape = RoundedCornerShape(16)
-                )
-                .align(Alignment.BottomCenter)
-        ) {
-            Text(
-                text = stringResource(R.string.create_task),
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (isValid) MaterialTheme.colorScheme.secondary else PurpleGrey40
-            )
+                    Spacer(Modifier.height(8.dp))
+
+                    TaskInputFields(
+                        name = state.task.name,
+                        onNameChange = { newName ->
+                            viewModel.changeTaskModel(state.task.copy(name = newName))
+                        },
+                        description = state.task.description,
+                        onDescriptionChange = { newDesc ->
+                            viewModel.changeTaskModel(state.task.copy(description = newDesc))
+                        },
+                        deadline = state.task.deadline,
+                        onDeadlineChange = { newDeadline ->
+                            viewModel.changeTaskModel(state.task.copy(deadline = newDeadline))
+                        },
+                        dateFormatter = dateFormatter
+                    )
+
+                    PrioritySelector(
+                        priority = state.task.priority,
+                        isMenuVisible = isPriorityMenuVisible,
+                        onMenuVisibilityChange = { isPriorityMenuVisible = it },
+                        onPrioritySelected = { viewModel.changeTaskModel(state.task.copy(priority = it)) }
+                    )
+                }
+
+                val isValid by remember(state) {
+                    derivedStateOf { state.task.name.isNotEmpty() }
+                }
+
+                TextButton(
+                    onClick = {
+                        viewModel.createTask(state.task.copy(deadline = state.task.deadline.toApiFormat()))
+                        onBackClick()
+                    },
+                    enabled = isValid,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(0.9f)
+                        .background(
+                            color = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onTertiary,
+                            shape = RoundedCornerShape(16)
+                        )
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Text(
+                        text = stringResource(R.string.create_task),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (isValid) MaterialTheme.colorScheme.secondary else PurpleGrey40
+                    )
+                }
+            }
         }
     }
 }
 
 
-fun TaskPriority.localizedName(): String = when (this) {
-    TaskPriority.CRITICAL -> CRITICAL
-    TaskPriority.HIGH -> HIGH
-    TaskPriority.MEDIUM -> MEDIUM
-    TaskPriority.LOW -> LOW
-}
-
-fun TaskPriority.color(): Color = when (this) {
-    TaskPriority.CRITICAL -> OverdueColor
-    TaskPriority.HIGH -> deadlineMarkerColor
-    TaskPriority.MEDIUM -> CompletedColor
-    TaskPriority.LOW -> LateColor
-}
 
 

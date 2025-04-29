@@ -7,17 +7,27 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TaskTitle(title: String) {
+fun TaskTitle(title: String, isChecked: Boolean, id: String, onCheckAction: (String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Checkbox(checked = true, onCheckedChange = {}, modifier = Modifier.size(16.dp))
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = {
+                onCheckAction(id)
+            },
+            modifier = Modifier.size(16.dp)
+        )
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium,

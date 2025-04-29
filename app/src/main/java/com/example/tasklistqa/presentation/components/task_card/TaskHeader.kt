@@ -9,13 +9,19 @@ import androidx.compose.ui.Modifier
 import com.example.tasklistqa.data.models.TaskStatus
 
 @Composable
-fun TaskHeader(title: String, status: TaskStatus) {
+fun TaskHeader(
+    title: String,
+    status: TaskStatus,
+    isChecked: Boolean,
+    id: String,
+    onCheckAction: (String) -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TaskTitle(title)
+        TaskTitle(title, isChecked, id = id, onCheckAction = onCheckAction)
         TaskStatus(status)
     }
 }

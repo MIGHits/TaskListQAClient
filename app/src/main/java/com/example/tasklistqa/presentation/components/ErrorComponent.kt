@@ -16,8 +16,7 @@ import com.example.tasklistqa.R
 fun ErrorComponent(
     message: String,
     onRetry: () -> Unit,
-    onDismiss: () -> Unit,
-    reLogin: () -> Unit = {}
+    onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -52,6 +51,7 @@ fun ErrorComponent(
                 )
             }
         },
+        containerColor = MaterialTheme.colorScheme.onTertiary,
         modifier = Modifier
     )
 }

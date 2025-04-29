@@ -22,4 +22,9 @@
     <string name="task_status">Статус</string>
     <string name="save_task">Сохранить</string>
     <string name="edit_full_task">Редактирование</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="error_handling_exception">Ошибка обработки ошибки: %1$s</string>
+    <string name="connectionError">Проверьте подключение к сети</string>
+    <string name="creation_date">creation_date</string>
+    <string name="priority_sort_field">priority</string>
 </resources>

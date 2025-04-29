@@ -41,6 +41,15 @@ android {
 }
 
 dependencies {
+    implementation(libs.accompanist.swiperefresh.v0312alpha)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.koin.androidx.compose)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.insert.koin.koin.core)
+    implementation(libs.koin.core)
     implementation(libs.swipe)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlinx.serialization.json)

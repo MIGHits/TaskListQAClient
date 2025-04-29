@@ -16,24 +16,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.data.models.ShortTaskModel
+import com.example.tasklistqa.data.models.TaskStatus
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
 @Composable
-fun TaskCard(task: ShortTaskModel, toFullTask: () -> Unit) {
+fun TaskCard(
+    task: ShortTaskModel,
+    toFullTask: (String) -> Unit,
+    onDelete: (String) -> Unit,
+    onCheckAction: (String) -> Unit
+) {
     val delete = SwipeAction(
         onSwipe = {
-
-        },
-        icon = {
-
-        },
-        background = Color.Transparent
-    )
-
-    val edit = SwipeAction(
-        onSwipe = {
-
+            onDelete(task.id)
         },
         icon = {
 
@@ -42,9 +38,10 @@ fun TaskCard(task: ShortTaskModel, toFullTask: () -> Unit) {
     )
     SwipeableActionsBox(
         startActions = listOf(delete),
-        endActions = listOf(edit),
+        endActions = listOf(delete),
         backgroundUntilSwipeThreshold = Color.Transparent,
-        modifier = Modifier.clickable { toFullTask() }
+        swipeThreshold = 100.dp,
+        modifier = Modifier.clickable { toFullTask(task.id) }
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
@@ -55,7 +52,13 @@ fun TaskCard(task: ShortTaskModel, toFullTask: () -> Unit) {
                 .wrapContentHeight()
         ) {
             Column(Modifier.padding(16.dp)) {
-                TaskHeader(title = task.name, status = task.status)
+                TaskHeader(
+                    title = task.name,
+                    status = task.status,
+                    isChecked = listOf(TaskStatus.LATE, TaskStatus.COMPLETED).contains(task.status),
+                    onCheckAction = { onCheckAction(task.id) },
+                    id = task.id
+                )
                 Spacer(Modifier.height(12.dp))
                 TaskFooter(deadline = task.deadline, priority = task.priority)
             }
