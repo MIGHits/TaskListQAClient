@@ -36,32 +36,31 @@ fun DatePickerField(
         Calendar.getInstance().apply { time = it }
     } ?: currentCalendar
 
-    val datePickerDialog = remember {
-        val contextThemeWrapper = androidx.appcompat.view.ContextThemeWrapper(
-            context,
-            R.style.CustomTimePickerDialogTheme
-        )
-        DatePickerDialog(
-            contextThemeWrapper,
-            { _, year, month, day ->
-                onDateTimeSelected(
-                    dateFormatter.format(
-                        Calendar.getInstance().apply { set(year, month, day) }.time
-                    )
-                )
-            },
-            currentCalendar.get(Calendar.YEAR),
-            currentCalendar.get(Calendar.MONTH),
-            currentCalendar.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            datePicker.minDate = minCalendar.timeInMillis
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { datePickerDialog.show() }
+            .clickable {
+                val contextThemeWrapper = androidx.appcompat.view.ContextThemeWrapper(
+                    context,
+                    R.style.CustomTimePickerDialogTheme
+                )
+                val dialog = DatePickerDialog(
+                    contextThemeWrapper,
+                    { _, year, month, day ->
+                        onDateTimeSelected(
+                            dateFormatter.format(
+                                Calendar.getInstance().apply { set(year, month, day) }.time
+                            )
+                        )
+                    },
+                    currentCalendar.get(Calendar.YEAR),
+                    currentCalendar.get(Calendar.MONTH),
+                    currentCalendar.get(Calendar.DAY_OF_MONTH)
+                ).apply {
+                    datePicker.minDate = minCalendar.timeInMillis
+                }
+                dialog.show()
+            }
     ) {
         TextField(
             value = deadline,

@@ -21,11 +21,10 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun Deadline(deadline: String) {
     val daysRemaining = ChronoUnit.DAYS.between(
+        LocalDate.now(),
         LocalDate.parse(
             deadline,
-            DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        ),
-        LocalDate.now()
+        )
     )
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Icon(

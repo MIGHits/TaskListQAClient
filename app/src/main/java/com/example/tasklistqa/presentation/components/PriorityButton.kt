@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
+import com.example.tasklistqa.common.Utils.color
+import com.example.tasklistqa.common.Utils.localizedName
 import com.example.tasklistqa.data.models.TaskPriority
-import com.example.tasklistqa.presentation.color
-import com.example.tasklistqa.presentation.localizedName
 import com.example.tasklistqa.ui.theme.PurpleGrey40
 
 @Composable

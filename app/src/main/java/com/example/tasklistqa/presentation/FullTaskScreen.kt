@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,13 +34,21 @@ import com.example.tasklistqa.common.Constant.ACTIVE
 import com.example.tasklistqa.common.Constant.COMPLETED
 import com.example.tasklistqa.common.Constant.LATE
 import com.example.tasklistqa.common.Constant.OVERDUE
+import com.example.tasklistqa.common.Utils.color
+import com.example.tasklistqa.common.Utils.localizedName
+import com.example.tasklistqa.common.Utils.toApiFormat
+import com.example.tasklistqa.common.Utils.toDisplayFormat
+import com.example.tasklistqa.data.models.EditTaskModel
 import com.example.tasklistqa.data.models.FullTaskModel
 import com.example.tasklistqa.data.models.TaskPriority
 import com.example.tasklistqa.data.models.TaskStatus
 import com.example.tasklistqa.presentation.components.DatePickerField
+import com.example.tasklistqa.presentation.components.ErrorComponent
+import com.example.tasklistqa.presentation.components.LoadingIndicator
 import com.example.tasklistqa.presentation.components.PrioritySelector
 import com.example.tasklistqa.presentation.components.ScreenHeader
 import com.example.tasklistqa.presentation.components.TaskField
+import com.example.tasklistqa.presentation.viewModel.TaskDetailsViewModel
 import com.example.tasklistqa.ui.theme.ActiveColor
 import com.example.tasklistqa.ui.theme.CompletedColor
 import com.example.tasklistqa.ui.theme.LateColor
@@ -47,122 +57,156 @@ import com.example.tasklistqa.ui.theme.PurpleGrey40
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
 @Composable
-fun FullTaskScreen(onBackAction: () -> Unit) {
-    val content by remember {
-        mutableStateOf(
-            FullTaskModel(
-                id = "",
-                name = "Имя",
-                description = "Описание",
-                createDate = "28.04.2025",
-                updateDate = "29.04.2025",
-                status = TaskStatus.ACTIVE,
-                deadline = "30.04.2025",
-                priority = TaskPriority.MEDIUM
-            )
-        )
-    }
+fun FullTaskScreen(
+    onBackAction: () -> Unit,
+    viewModel: TaskDetailsViewModel
+) {
+    val screenState by viewModel.screenState.collectAsState()
+    var isPriorityMenuVisible by remember { mutableStateOf(false) }
 
     val dateFormatter = remember {
         SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
     }
-    var isValid by remember { mutableStateOf(false) }
-    var isPriorityMenuVisible by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.fillMaxSize()) {
 
-        ScreenHeader(
-            onBackClick = { onBackAction() },
-            title = stringResource(R.string.edit_full_task),
-            modifier = Modifier.align(Alignment.TopCenter)
+    when (val state = screenState) {
+        is TaskContentState.Loading -> return LoadingIndicator()
+        TaskContentState.Empty -> return Unit
+        is TaskContentState.Error -> return ErrorComponent(
+            state.message,
+            onRetry = { viewModel.getTaskDetails() },
+            onDismiss = { viewModel.restorePreviousState() }
         )
 
-        LazyColumn(
-            state = rememberLazyListState(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .padding(top = 48.dp)
-                .fillMaxSize()
-                .zIndex(1f)
-                .align(Alignment.Center),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            item {
-                TaskField(
-                    value = content.name,
-                    onValueChange = { },
-                    name = stringResource(R.string.name)
-                )
+        is TaskContentState.Success -> {
+            val content = state.content ?: run {
+                ErrorComponent("Content is null", onRetry = {}, onDismiss = onBackAction)
+                return
             }
-            item {
-                TaskField(
-                    value = content.description,
-                    onValueChange = { },
-                    name = stringResource(R.string.description)
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                ScreenHeader(
+                    onBackClick = onBackAction,
+                    title = stringResource(R.string.edit_full_task),
+                    modifier = Modifier.align(Alignment.TopCenter)
                 )
+
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(top = 48.dp, bottom = 48.dp)
+                        .fillMaxSize()
+                        .zIndex(1f)
+                        .align(Alignment.Center),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    item {
+                        TaskField(
+                            value = content.name,
+                            onValueChange = { newName ->
+                                viewModel.editTask(content.copy(name = newName))
+                            },
+                            name = stringResource(R.string.name)
+                        )
+                    }
+                    item {
+                        TaskField(
+                            value = content.description,
+                            onValueChange = { newDescription ->
+                                viewModel.editTask(content.copy(description = newDescription))
+                            },
+                            name = stringResource(R.string.description)
+                        )
+                    }
+                    item {
+                        DatePickerField(
+                            deadline = content.deadline.toDisplayFormat(),
+                            onDateTimeSelected = { newDeadline ->
+                                viewModel.editTask(content.copy(deadline = newDeadline))
+                            },
+                            minDateTime = Date.from(
+                                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            ),
+                            dateFormatter = dateFormatter
+                        )
+                    }
+                    item {
+                        ImmutableCardField(
+                            fieldName = stringResource(R.string.creation_date_label),
+                            value = content.createDate.toDisplayFormat()
+                        )
+                    }
+                    item {
+                        ImmutableCardField(
+                            fieldName = stringResource(R.string.last_update),
+                            value = content.updateDate.toDisplayFormat()
+                        )
+                    }
+                    item {
+                        ImmutableCardField(
+                            fieldName = stringResource(R.string.task_status),
+                            value = content.status.localizedName(),
+                            textColor = content.status.color()
+                        )
+                    }
+                    item {
+                        PrioritySelector(
+                            priority = content.priority,
+                            isMenuVisible = isPriorityMenuVisible,
+                            onMenuVisibilityChange = {
+                                isPriorityMenuVisible = !isPriorityMenuVisible
+                            },
+                            onPrioritySelected = { newPriority ->
+                                viewModel.editTask(content.copy(priority = newPriority))
+                            }
+                        )
+                    }
+                }
+
+                val isValid by remember(content) {
+                    derivedStateOf { content.name.isNotEmpty() }
+                }
+
+                TextButton(
+                    onClick = {
+                        viewModel.editTaskById(
+                            EditTaskModel(
+                                id = content.id,
+                                name = content.name,
+                                deadline = content.deadline.toApiFormat(),
+                                description = content.description,
+                                priority = content.priority
+                            )
+                        )
+                    },
+                    enabled = true,
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(0.9f)
+                        .background(
+                            color = if (isValid) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onTertiary,
+                            shape = RoundedCornerShape(16)
+                        )
+                        .zIndex(0f)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Text(
+                        text = stringResource(R.string.save_task),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (isValid) MaterialTheme.colorScheme.secondary
+                        else PurpleGrey40
+                    )
+                }
             }
-            item {
-                DatePickerField(
-                    deadline = content.deadline,
-                    onDateTimeSelected = {},
-                    minDateTime = Date.from(
-                        LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                    ),
-                    dateFormatter = dateFormatter
-                )
-            }
-            item {
-                ImmutableCardField(
-                    fieldName = stringResource(R.string.creation_date_label),
-                    value = content.createDate
-                )
-            }
-            item {
-                ImmutableCardField(
-                    fieldName = stringResource(R.string.last_update),
-                    value = content.updateDate
-                )
-            }
-            item {
-                ImmutableCardField(
-                    fieldName = stringResource(R.string.task_status),
-                    value = content.status.localizedName(),
-                    textColor = content.status.color()
-                )
-            }
-            item {
-                PrioritySelector(
-                    priority = content.priority,
-                    isMenuVisible = isPriorityMenuVisible,
-                    onMenuVisibilityChange = { isPriorityMenuVisible = it },
-                    onPrioritySelected = {}
-                )
-            }
-        }
-        TextButton(
-            onClick = {},
-            enabled = isValid,
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .fillMaxWidth(0.9f)
-                .background(
-                    color = if (isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onTertiary,
-                    shape = RoundedCornerShape(16)
-                )
-                .zIndex(0f)
-                .align(Alignment.BottomCenter)
-        ) {
-            Text(
-                text = stringResource(R.string.save_task),
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (isValid) MaterialTheme.colorScheme.secondary else PurpleGrey40
-            )
         }
     }
 }
@@ -195,18 +239,4 @@ fun ImmutableCardField(
             color = textColor
         )
     }
-}
-
-fun TaskStatus.localizedName(): String = when (this) {
-    TaskStatus.ACTIVE -> ACTIVE
-    TaskStatus.LATE -> LATE
-    TaskStatus.COMPLETED -> COMPLETED
-    TaskStatus.OVERDUE -> OVERDUE
-}
-
-fun TaskStatus.color(): Color = when (this) {
-    TaskStatus.OVERDUE -> OverdueColor
-    TaskStatus.COMPLETED -> CompletedColor
-    TaskStatus.ACTIVE -> ActiveColor
-    TaskStatus.LATE -> LateColor
 }
