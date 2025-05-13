@@ -14,13 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
+import com.example.tasklistqa.common.Utils.localizedName
 import com.example.tasklistqa.data.models.TaskPriority
 
 @Composable
-fun PriorityBadge(priority: TaskPriority, modifier: Modifier = Modifier) {
+fun PriorityBadge(priority: TaskPriority, modifier: Modifier = Modifier, id: String) {
     Box(
         modifier = modifier
             .wrapContentSize()
@@ -41,9 +43,10 @@ fun PriorityBadge(priority: TaskPriority, modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = (priority.ordinal + 1).toString(),
+                text = priority.localizedName(),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.testTag("taskPriority_${id}")
             )
         }
     }

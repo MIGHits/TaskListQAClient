@@ -4,5 +4,5 @@ data class TaskModel(
     val name:String,
     val description:String,
     val deadline:String,
-    val priority: TaskPriority
+    val priority: TaskPriority?
 )

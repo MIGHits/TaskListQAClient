@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.tasklistqa.R
@@ -35,14 +36,14 @@ fun ErrorComponent(
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().testTag("errorMessage")
             )
         },
         confirmButton = {
             Button(
                 onClick = onRetry,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().testTag("retryButton")
             ) {
                 Text(
                     text = stringResource(R.string.retry),
@@ -52,6 +53,6 @@ fun ErrorComponent(
             }
         },
         containerColor = MaterialTheme.colorScheme.onTertiary,
-        modifier = Modifier
+        modifier = Modifier.testTag("errorDialog")
     )
 }

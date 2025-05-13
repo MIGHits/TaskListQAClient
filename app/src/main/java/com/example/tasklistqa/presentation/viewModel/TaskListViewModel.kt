@@ -14,18 +14,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.ConnectException
 
-class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
+open class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
     private val _screenState = MutableStateFlow<TaskScreenState>(TaskScreenState.Empty)
-    val screenState: StateFlow<TaskScreenState> get() = _screenState
+    open val screenState: StateFlow<TaskScreenState> get() = _screenState
 
     private val previousState = MutableStateFlow<TaskScreenState>(TaskScreenState.Empty)
 
     private val _filterState = MutableStateFlow(FilterState())
-    val filterState: StateFlow<FilterState> = _filterState
+    open val filterState: StateFlow<FilterState> = _filterState
 
 
 
-    fun updateFilter(newFilter: FilterState) {
+    open fun updateFilter(newFilter: FilterState) {
         _filterState.update { newFilter }
         getTasks()
     }
@@ -34,7 +34,7 @@ class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
         getTasks()
     }
 
-    fun getTasks() {
+    open fun getTasks() {
         saveCurrentState()
         _screenState.update { TaskScreenState.Loading }
         viewModelScope.launch {
@@ -64,7 +64,7 @@ class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun deleteTask(id: String) {
+    open fun deleteTask(id: String) {
         saveCurrentState()
         _screenState.update { TaskScreenState.Loading }
         viewModelScope.launch {
@@ -84,7 +84,7 @@ class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun markAsCompleted(id: String) {
+    open fun markAsCompleted(id: String) {
         saveCurrentState()
         viewModelScope.launch {
             try {
@@ -107,7 +107,7 @@ class TaskListViewModel(private val repository: TaskRepository) : ViewModel() {
         previousState.value = _screenState.value
     }
 
-    fun restorePreviousState() {
+    open fun restorePreviousState() {
         _screenState.value = previousState.value
     }
 }

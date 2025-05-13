@@ -1,5 +1,6 @@
 package com.example.tasklistqa.presentation.components
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
@@ -27,7 +29,8 @@ fun DatePickerField(
     deadline: String,
     onDateTimeSelected: (String) -> Unit,
     minDateTime: Date? = null,
-    dateFormatter: SimpleDateFormat
+    dateFormatter: SimpleDateFormat,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -37,7 +40,7 @@ fun DatePickerField(
     } ?: currentCalendar
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable {
                 val contextThemeWrapper = androidx.appcompat.view.ContextThemeWrapper(
@@ -66,7 +69,7 @@ fun DatePickerField(
             value = deadline,
             onValueChange = { value -> onDateTimeSelected(value) },
             readOnly = true,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag("deadlineText"),
             enabled = false,
             label = {
                 Text(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.data.models.TaskPriority
 
@@ -21,9 +22,11 @@ fun PriorityDropdownMenu(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
+            .testTag("PriorityMenu")
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.testTag("priorityColumn")
         ) {
             TaskPriority.entries.forEach { priority ->
                 PriorityMenuItem(

@@ -22,6 +22,6 @@ fun TaskHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TaskTitle(title, isChecked, id = id, onCheckAction = onCheckAction)
-        TaskStatus(status)
+        TaskStatus(status, id)
     }
 }

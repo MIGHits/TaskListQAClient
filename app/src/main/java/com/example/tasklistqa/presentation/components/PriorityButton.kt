@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
@@ -38,6 +39,7 @@ fun PriorityButton(
                 shape = RoundedCornerShape(16)
             )
             .clickable(onClick = onClick)
+            .testTag("priorityButton")
     ) {
         Row(
             modifier = Modifier
@@ -50,7 +52,7 @@ fun PriorityButton(
                 text = priority?.localizedName() ?: stringResource(R.string.priority_label),
                 style = MaterialTheme.typography.bodyMedium,
                 color = priority?.color() ?: PurpleGrey40,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp).testTag("priorityText")
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,

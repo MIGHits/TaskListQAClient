@@ -1,5 +1,6 @@
 package com.example.tasklistqa.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -105,7 +108,7 @@ fun FullTaskScreen(
                         .padding(top = 48.dp, bottom = 48.dp)
                         .fillMaxSize()
                         .zIndex(1f)
-                        .align(Alignment.Center),
+                        .align(Alignment.Center).testTag("lazyColumn"),
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     item {
@@ -114,47 +117,53 @@ fun FullTaskScreen(
                             onValueChange = { newName ->
                                 viewModel.editTask(content.copy(name = newName))
                             },
-                            name = stringResource(R.string.name)
+                            name = stringResource(R.string.name),
+                            modifier = Modifier.testTag("taskDetailsName")
                         )
                     }
                     item {
                         TaskField(
-                            value = content.description,
+                            value = content.description ?: "",
                             onValueChange = { newDescription ->
                                 viewModel.editTask(content.copy(description = newDescription))
                             },
-                            name = stringResource(R.string.description)
+                            name = stringResource(R.string.description),
+                            modifier = Modifier.testTag("taskDetailsDesc")
                         )
                     }
                     item {
                         DatePickerField(
-                            deadline = content.deadline.toDisplayFormat(),
+                            deadline = content.deadline?.toDisplayFormat() ?: "",
                             onDateTimeSelected = { newDeadline ->
                                 viewModel.editTask(content.copy(deadline = newDeadline))
                             },
                             minDateTime = Date.from(
                                 LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
                             ),
-                            dateFormatter = dateFormatter
+                            dateFormatter = dateFormatter,
+                            modifier = Modifier.testTag("taskDetailsDeadline")
                         )
                     }
                     item {
                         ImmutableCardField(
                             fieldName = stringResource(R.string.creation_date_label),
-                            value = content.createDate.toDisplayFormat()
+                            value = content.createDate.toDisplayFormat(),
+                            modifier = Modifier.testTag("taskDetailsCreationDate")
                         )
                     }
                     item {
                         ImmutableCardField(
                             fieldName = stringResource(R.string.last_update),
-                            value = content.updateDate.toDisplayFormat()
+                            value = content.updateDate.toDisplayFormat(),
+                            modifier = Modifier.testTag("taskDetailsLastUpdate")
                         )
                     }
                     item {
                         ImmutableCardField(
                             fieldName = stringResource(R.string.task_status),
                             value = content.status.localizedName(),
-                            textColor = content.status.color()
+                            textColor = content.status.color(),
+                            modifier = Modifier.testTag("taskDetailsStatus")
                         )
                     }
                     item {
@@ -166,7 +175,8 @@ fun FullTaskScreen(
                             },
                             onPrioritySelected = { newPriority ->
                                 viewModel.editTask(content.copy(priority = newPriority))
-                            }
+                            },
+                            modifier = Modifier.testTag("prioritySelector")
                         )
                     }
                 }
@@ -181,7 +191,7 @@ fun FullTaskScreen(
                             EditTaskModel(
                                 id = content.id,
                                 name = content.name,
-                                deadline = content.deadline.toApiFormat(),
+                                deadline = content.deadline?.toApiFormat(),
                                 description = content.description,
                                 priority = content.priority
                             )
@@ -198,6 +208,7 @@ fun FullTaskScreen(
                         )
                         .zIndex(0f)
                         .align(Alignment.BottomCenter)
+                        .testTag("saveButton")
                 ) {
                     Text(
                         text = stringResource(R.string.save_task),
@@ -216,10 +227,11 @@ fun FullTaskScreen(
 fun ImmutableCardField(
     fieldName: String,
     value: String,
-    textColor: Color = MaterialTheme.colorScheme.secondary
+    textColor: Color = MaterialTheme.colorScheme.secondary,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.onTertiary,
@@ -236,7 +248,8 @@ fun ImmutableCardField(
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = textColor
+            color = textColor,
+            modifier = Modifier.testTag("$fieldName value")
         )
     }
 }

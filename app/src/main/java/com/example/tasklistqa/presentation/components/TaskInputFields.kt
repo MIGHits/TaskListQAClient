@@ -1,6 +1,8 @@
 package com.example.tasklistqa.presentation.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.example.tasklistqa.R
 import java.text.SimpleDateFormat
@@ -21,13 +23,15 @@ fun TaskInputFields(
     TaskField(
         value = name,
         onValueChange = onNameChange,
-        name = stringResource(R.string.name)
+        name = stringResource(R.string.name),
+        modifier = Modifier.testTag("nameInput")
     )
 
     TaskField(
         value = description,
         onValueChange = onDescriptionChange,
-        name = stringResource(R.string.description)
+        name = stringResource(R.string.description),
+        modifier = Modifier.testTag("descriptionInput")
     )
 
     DatePickerField(
@@ -36,6 +40,7 @@ fun TaskInputFields(
         minDateTime = Date.from(
             LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
         ),
-        dateFormatter = dateFormatter
+        dateFormatter = dateFormatter,
+        modifier = Modifier.testTag("deadlineInput")
     )
 }

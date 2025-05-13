@@ -38,9 +38,20 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
 }
 
 dependencies {
+    implementation(libs.androidx.navigation.testing)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.core.ktx)
+    implementation(libs.kotlinx.coroutines.test)
     implementation(libs.accompanist.swiperefresh.v0312alpha)
     implementation(libs.gson)
     implementation(libs.converter.gson)
@@ -54,6 +65,7 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
+    testImplementation (libs.mockito.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -63,11 +75,17 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.appcompat)
-    testImplementation(libs.junit)
+    implementation(libs.androidx.ui.test.junit4.android)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.compose)
+    testImplementation(kotlin("test"))
+    testImplementation (libs.koin.test)
+    testImplementation (libs.koin.test.junit4)
+    testImplementation (libs.mockk)
+    androidTestImplementation(libs.kotlinx.coroutines.test.v173)
 }

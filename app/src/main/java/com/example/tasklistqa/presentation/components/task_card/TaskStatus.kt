@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.data.models.TaskStatus
@@ -16,7 +17,7 @@ import com.example.tasklistqa.ui.theme.LateColor
 import com.example.tasklistqa.ui.theme.OverdueColor
 
 @Composable
-fun TaskStatus(status: TaskStatus) {
+fun TaskStatus(status: TaskStatus,id:String) {
     Text(
         text = status.name,
         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
@@ -32,5 +33,6 @@ fun TaskStatus(status: TaskStatus) {
                 },
             )
             .padding(4.dp)
+            .testTag("taskStatus_${id}")
     )
 }

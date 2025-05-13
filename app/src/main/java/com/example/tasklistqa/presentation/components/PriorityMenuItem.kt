@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.common.Utils.color
 import com.example.tasklistqa.common.Utils.localizedName
@@ -30,5 +31,6 @@ fun PriorityMenuItem(
             .background(color = priority.color(), shape = RoundedCornerShape(8.dp))
             .padding(16.dp)
             .clickable(onClick = onClick)
+            .testTag(priority.name)
     )
 }

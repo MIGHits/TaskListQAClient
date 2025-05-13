@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -19,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Composable
-fun Deadline(deadline: String) {
+fun Deadline(deadline: String, id: String) {
     val daysRemaining = ChronoUnit.DAYS.between(
         LocalDate.now(),
         LocalDate.parse(
@@ -47,7 +48,8 @@ fun Deadline(deadline: String) {
                 ).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             ),
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.testTag("taskDeadline_${id}")
         )
     }
 }
