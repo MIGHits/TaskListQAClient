@@ -9,7 +9,7 @@ import com.example.tasklistqa.data.models.TaskModel
 import com.example.tasklistqa.data.remote.TaskService
 import retrofit2.Response
 
-class TaskRepository(private val taskService: TaskService) {
+open class TaskRepository(private val taskService: TaskService) {
     suspend fun getAllTasks(
         sortDirection: String?,
         sortField: String?,
@@ -26,7 +26,7 @@ class TaskRepository(private val taskService: TaskService) {
         return taskService.getTaskById(id)
     }
 
-    suspend fun createTask(task: TaskModel): Response<String> {
+    open suspend fun createTask(task: TaskModel): Response<String> {
         return taskService.createTask(task)
     }
 

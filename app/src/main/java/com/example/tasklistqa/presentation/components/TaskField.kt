@@ -16,11 +16,16 @@ import com.example.tasklistqa.R
 import com.example.tasklistqa.ui.theme.PurpleGrey40
 
 @Composable
-fun TaskField(value: String, onValueChange: (String) -> Unit, name: String) {
+fun TaskField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    name: String,
+    modifier: Modifier = Modifier
+) {
     TextField(
         value = value,
         onValueChange = { newValue -> onValueChange(newValue) },
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.onTertiary,

@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.data.models.ShortTaskModel
 import com.example.tasklistqa.data.models.TaskStatus
@@ -25,7 +26,8 @@ fun TaskCard(
     task: ShortTaskModel,
     toFullTask: (String) -> Unit,
     onDelete: (String) -> Unit,
-    onCheckAction: (String) -> Unit
+    onCheckAction: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val delete = SwipeAction(
         onSwipe = {
@@ -41,7 +43,8 @@ fun TaskCard(
         endActions = listOf(delete),
         backgroundUntilSwipeThreshold = Color.Transparent,
         swipeThreshold = 100.dp,
-        modifier = Modifier.clickable { toFullTask(task.id) }
+        modifier = modifier
+            .clickable { toFullTask(task.id) }
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
@@ -50,6 +53,7 @@ fun TaskCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .testTag("task_${task.id}")
         ) {
             Column(Modifier.padding(16.dp)) {
                 TaskHeader(
@@ -60,7 +64,7 @@ fun TaskCard(
                     id = task.id
                 )
                 Spacer(Modifier.height(12.dp))
-                TaskFooter(deadline = task.deadline, priority = task.priority)
+                TaskFooter(deadline = task.deadline, priority = task.priority, id = task.id)
             }
         }
     }

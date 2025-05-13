@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
@@ -91,7 +92,8 @@ fun TaskScreen(
                         onClick = { toCreationScreen() },
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(bottom = 20.dp),
+                            .padding(bottom = 20.dp)
+                            .testTag("addButton"),
                         containerColor = MaterialTheme.colorScheme.primary
                     ) {
                         Icon(
@@ -126,7 +128,8 @@ fun TaskScreen(
                                     viewModel.markAsCompleted(
                                         id = item.id
                                     )
-                                }
+                                },
+                                modifier = Modifier.testTag(item.name)
                             )
                         }
                     }
@@ -139,6 +142,7 @@ fun TaskScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 100.dp)
+                                    .testTag("emptyStub")
                             )
                         }
                     }

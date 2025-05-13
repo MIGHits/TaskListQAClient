@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -26,12 +27,13 @@ fun TaskTitle(title: String, isChecked: Boolean, id: String, onCheckAction: (Str
             onCheckedChange = {
                 onCheckAction(id)
             },
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp).testTag("taskCheckbox_${id}")
         )
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.testTag("taskName_${id}")
         )
     }
 }

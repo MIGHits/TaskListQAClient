@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.R
@@ -57,7 +58,7 @@ fun CreateTaskScreen(
         is CreateTaskState.Loading -> LoadingIndicator()
         is CreateTaskState.Error -> ErrorComponent(
             state.message,
-            onRetry = { viewModel.createTask(viewModel.previousState.value) },
+            onRetry = { viewModel.createTask(viewModel.previousState.value, onBackClick) },
             onDismiss = { viewModel.restorePreviousState() })
 
         is CreateTaskState.Content -> {
@@ -95,7 +96,8 @@ fun CreateTaskScreen(
                         priority = state.task.priority,
                         isMenuVisible = isPriorityMenuVisible,
                         onMenuVisibilityChange = { isPriorityMenuVisible = it },
-                        onPrioritySelected = { viewModel.changeTaskModel(state.task.copy(priority = it)) }
+                        onPrioritySelected = { viewModel.changeTaskModel(state.task.copy(priority = it)) },
+                        modifier = Modifier.testTag("prioritySelector")
                     )
                 }
 
@@ -105,8 +107,10 @@ fun CreateTaskScreen(
 
                 TextButton(
                     onClick = {
-                        viewModel.createTask(state.task.copy(deadline = state.task.deadline.toApiFormat()))
-                        onBackClick()
+                        viewModel.createTask(
+                            state.task.copy(deadline = state.task.deadline.toApiFormat()),
+                            onBackClick
+                        )
                     },
                     enabled = isValid,
                     modifier = Modifier
@@ -117,6 +121,7 @@ fun CreateTaskScreen(
                             shape = RoundedCornerShape(16)
                         )
                         .align(Alignment.BottomCenter)
+                        .testTag("CreateButton")
                 ) {
                     Text(
                         text = stringResource(R.string.create_task),

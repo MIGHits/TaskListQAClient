@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tasklistqa.data.models.TaskPriority
 
 @Composable
-fun TaskFooter(deadline: String?, priority: TaskPriority) {
+fun TaskFooter(deadline: String?, priority: TaskPriority, id: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -24,9 +24,9 @@ fun TaskFooter(deadline: String?, priority: TaskPriority) {
             }
 
             else -> {
-                Deadline(deadline)
+                Deadline(deadline, id)
             }
         }
-        PriorityBadge(priority)
+        PriorityBadge(priority = priority, id = id)
     }
 }

@@ -12,35 +12,36 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class TaskCreationViewModel(private val repository: TaskRepository) : ViewModel() {
+open class TaskCreationViewModel(private val repository: TaskRepository) : ViewModel() {
     private val _screenState = MutableStateFlow<CreateTaskState>(
         CreateTaskState.Content(
             TaskModel(
                 name = "",
                 description = "",
                 deadline = "",
-                priority = TaskPriority.MEDIUM
+                priority = null
             )
         )
     )
-    val screenState: StateFlow<CreateTaskState> get() = _screenState
+    open val screenState: StateFlow<CreateTaskState> get() = _screenState
 
     private val _previousState = MutableStateFlow(
         TaskModel(
             name = "",
             description = "",
             deadline = "",
-            priority = TaskPriority.MEDIUM
+            priority = null
         )
     )
-    val previousState: StateFlow<TaskModel> get() = _previousState
+    open val previousState: StateFlow<TaskModel> get() = _previousState
 
-    fun createTask(task: TaskModel) {
+    open fun createTask(task: TaskModel, onCreate: () -> Unit) {
         _screenState.update { CreateTaskState.Loading }
         viewModelScope.launch {
             val response = repository.createTask(task)
             if (response.isSuccessful) {
                 _screenState.update { CreateTaskState.Content(task) }
+                onCreate()
             } else {
                 val errorMessage = parseErrorMessage(response)
                 _screenState.update { CreateTaskState.Error(errorMessage) }
@@ -48,7 +49,7 @@ class TaskCreationViewModel(private val repository: TaskRepository) : ViewModel(
         }
     }
 
-    fun changeTaskModel(task: TaskModel) {
+    open fun changeTaskModel(task: TaskModel) {
         _screenState.update { CreateTaskState.Content(task) }
         saveCurrentState(task)
     }
@@ -57,7 +58,7 @@ class TaskCreationViewModel(private val repository: TaskRepository) : ViewModel(
         _previousState.update { task }
     }
 
-    fun restorePreviousState() {
+    open fun restorePreviousState() {
         _screenState.update { CreateTaskState.Content(_previousState.value) }
     }
 }
